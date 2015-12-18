@@ -379,8 +379,17 @@ sensors_poll_context_t::~sensors_poll_context_t() {
 int sensors_poll_context_t::activate(int handle, int enabled) {
 
     int index = handleToDriver(handle);
+    int indexGyro;
+
     PDEBUG("activate, handle: %d, enabled: %d",
            handle, enabled);
+
+    if (handle == ID_STC || handle == ID_STD) {
+        indexGyro = handleToDriver(ID_GY);
+
+        if (indexGyro > 0)
+            mSensors[indexGyro]->enable(ID_GY, enabled);
+    }
 
     if (index < 0) return index;
     int err = mSensors[index]->enable(handle, enabled);
